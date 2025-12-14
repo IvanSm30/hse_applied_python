@@ -1,0 +1,14 @@
+[project]
+name = "hse-applied-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.13.2",
+    "openmeteo-requests>=1.7.4",
+    "python-dotenv>=1.2.1",
+    "requests-cache>=1.2.1",
+    "retry-requests>=2.0.0",
+    "streamlit>=1.52.1",
+]
