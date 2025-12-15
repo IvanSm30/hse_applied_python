@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import streamlit as st
 import requests
 import numpy as np
@@ -7,6 +8,9 @@ from datetime import datetime, timezone, timedelta
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 import pytz
+import os
+
+load_dotenv()
 
 st.markdown(
     """
@@ -204,7 +208,7 @@ data = pd.read_csv("temperature_data.csv")
 st.header("Weather App")
 
 city = st.selectbox("Choose city", city_options, placeholder="Choose one option...")
-api_key = st.session_state.get("api_key", "e9043dc6796e3ce6b7607e6d087f66af")
+api_key = st.session_state.get("api_key", os.getenv("API_KEY"))
 
 if city and api_key:
     res = get_current_weather_for_city(city, api_key)
