@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import streamlit as st
 import requests
 import numpy as np
@@ -8,24 +7,28 @@ from datetime import datetime, timezone, timedelta
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 import pytz
-import os
 
-load_dotenv()
+st.set_page_config(page_title="Weather App", layout="centered")
 
 st.markdown(
     """
     <style>
-    h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
-        display: none !important;
-    }
-    
-    .stMarkdown a[href^='#'] {
-        display: none !important;
-    }
+        h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
+            display: none !important;
+        }
+        
+        .stMarkdown a[href^='#'] {
+            display: none !important;
+        }
 
-    .stApp a[href^='#'] {
-        display: none !important;
-    }
+        .stApp a[href^='#'] {
+            display: none !important;
+        }
+        
+        [data-testid="stImageContainer"]:nth-child(n+2) > img {
+            height: 34px;
+            width: 34px;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -33,13 +36,13 @@ st.markdown(
 
 
 def get_current_weather_for_city(city: str, API_KEY: str):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+        response = requests.get(url)
         data = response.json()
         return data
-    else:
-        return None
+    except Exception as e:
+        return e
 
 
 def analysis_time_series(
@@ -203,20 +206,37 @@ city_options = [
     "Mexico City",
 ]
 
-data = pd.read_csv("temperature_data.csv")
+data = st.session_state.get("historical_data")
 
 st.header("Weather App")
 
 city = st.selectbox("Choose city", city_options, placeholder="Choose one option...")
-api_key = st.session_state.get("api_key", os.getenv("API_KEY"))
+api_key = st.session_state.get("api_key", "e9043dc6796e3ce6b7607e6d087f66af")
 
 if city and api_key:
     res = get_current_weather_for_city(city, api_key)
 
-    main = res.get("weather")[0].get("main")
+    if res.get("cod") != 200:
+        st.error(res.get("message"))
+        st.stop()
+
+    weather_main = res.get("weather")[0].get("main")
     description = res.get("weather")[0].get("description")
 
-    temp = res.get("main").get("temp")
+    main = res.get("main")
+    temp = main.get("temp")
+    feels_like = main.get("feels_like")
+    temp_min = main.get("temp_min")
+    temp_max = main.get("temp_max")
+
+    pressure = main.get("pressure")
+
+    humidity = main.get("humidity")
+
+    sea_level = main.get("sea_level")
+    grnd_level = main.get("grnd_level")
+
+    visibility = res.get("visibility")
 
     country = res.get("sys").get("country")
 
@@ -226,66 +246,129 @@ if city and api_key:
 
     local_time = get_local_time_by_city(city).strftime("%H:%M")
 
+    wind = res.get("wind")
+    speed = wind.get("speed")
+    gust = wind.get("gust")
+    deg = wind.get("deg")
+
     image = (
         f"https://openweathermap.org/img/wn/{res.get('weather')[0].get('icon')}@2x.png"
     )
 
-    st.markdown(f"##### Local time: {local_time}", text_alignment="center")
+    st.markdown(
+        f"##### Local time ({country},  {city}): {local_time}", text_alignment="center"
+    )
 
     col1, col2, col3, col4 = st.columns([1.5, 1, 1, 1])
 
     with col1:
         with st.container(
             border=True,
-            # width="content",
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            # st.subheader(f"{country}, {city}", text_alignment="center")
             st.subheader(city, text_alignment="center")
             st.header(f"{round(temp)} ℃", text_alignment="center")
-            st.markdown(main, text_alignment="center")
-            st.caption(description, text_alignment="center")
+            st.caption(
+                f"Feels like: {str(round(feels_like))} ℃", text_alignment="center"
+            )
+            st.caption(
+                f"H: {str(round(temp_max))} ℃ L: {str(round(temp_min))} ℃",
+                text_alignment="center",
+            )
+            st.markdown(weather_main, text_alignment="center")
+            if description.lower().strip() != weather_main.lower().strip():
+                st.caption(description, text_alignment="center")
             st.image(image, channels="RGB")
 
     with col2:
         with st.container(
             border=True,
-            width="content",
+            width=100,
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.subheader("Sunrise", text_alignment="center")
-            st.image("sunrise.png", channels="RGB")
-            st.markdown(f"**{sunrise}**", text_alignment="center")
+            st.image("icons/sunrise.svg", caption="Sunrise", width=50)
+            st.markdown(f"{sunrise} AM", text_alignment="center")
 
     with col3:
         with st.container(
             border=True,
-            width="content",
+            width=100,
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.subheader("Sunset", text_alignment="center")
-            st.image("sunset.png", channels="RGB")
-            st.markdown(f"**{sunset}**", text_alignment="center")
+            st.image("icons/sunset.svg", caption="Sunset", width=50)
+            st.markdown(f"{sunset} PM", text_alignment="center")
 
     with col4:
         with st.container(
             border=True,
-            width="content",
+            width=200,
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.subheader("Wind", text_alignment="center")
-            st.image("wind.png", channels="RGB")
+            st.image("icons/wind.svg", caption="Wind", width=50)
+            st.markdown(f"speed - {speed}", text_alignment="center")
+            st.markdown(f"gust - {gust}", text_alignment="center")
+            st.markdown(f"deg - {deg}", text_alignment="center")
 
-    st.markdown("##### Analysis time series temp", text_alignment="center")
+    with col2:
+        with st.container(
+            border=True,
+            width=200,
+            horizontal_alignment="center",
+            vertical_alignment="center",
+        ):
+            # st.image("icons/pressure.svg", caption="Pressure", width=50)
+            st.caption("Pressure", text_alignment="center")
+            st.markdown(pressure, text_alignment="center")
 
-    with st.container(
-        border=True,
-    ):
-        analysis = analysis_time_series(data, city)
-        df_enriched = analysis.get("df_enriched")
-        anomalies = analysis.get("anomalies")
-        graphic_time_series(df_enriched, city, anomalies)
+    with col3:
+        with st.container(
+            border=True,
+            width=200,
+            horizontal_alignment="center",
+            vertical_alignment="center",
+        ):
+            # st.image("icons/humidity.svg", caption="Humidity", width=50)
+            st.caption("Humidity", text_alignment="center")
+            st.markdown(humidity, text_alignment="center")
+
+    with col2:
+        with st.container(
+            border=True,
+            width=200,
+            horizontal_alignment="center",
+            vertical_alignment="center",
+        ):
+            # st.image("icons/visibility.svg", caption="Visibility", width=50)
+            st.caption("Visibility", text_alignment="center")
+            st.markdown(visibility, text_alignment="center")
+
+    with col3:
+        with st.container(
+            border=True,
+            width=200,
+            horizontal_alignment="center",
+            vertical_alignment="center",
+        ):
+            st.caption("sea_level", text_alignment="center")
+            st.markdown(sea_level, text_alignment="center")
+
+            st.caption("grnd_level", text_alignment="center")
+            st.markdown(grnd_level, text_alignment="center")
+
+    if data:
+        st.markdown("##### Analysis time series temp", text_alignment="center")
+
+        with st.container(
+            border=True,
+        ):
+            analysis = analysis_time_series(data, city)
+            df_enriched = analysis.get("df_enriched")
+            anomalies = analysis.get("anomalies")
+            graphic_time_series(df_enriched, city, anomalies)
+
+elif api_key is None:
+    st.switch_page("pages/settings.py")
