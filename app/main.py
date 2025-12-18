@@ -33,6 +33,10 @@ st.markdown(
             height: 34px;
             width: 34px;
         }
+        
+        [data-testid="stCaptionContainer"] > p {
+            margin: 0px;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -467,6 +471,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/sunrise.svg", width=30)
+            st.caption("Sunrise", text_alignment="center")
             st.markdown(f"{sunrise} AM", text_alignment="center")
 
     with col3:
@@ -477,6 +482,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/sunset.svg", width=30)
+            st.caption("Sunset", text_alignment="center")
             st.markdown(f"{sunset} PM", text_alignment="center")
 
     with col2:
@@ -487,6 +493,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/pressure.svg", width=30)
+            st.caption("Pressure", text_alignment="center")
             st.markdown(f"{pressure} hPa", text_alignment="center")
 
     with col3:
@@ -497,6 +504,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/humidity.svg", width=30)
+            st.caption("Humidity", text_alignment="center")
             st.markdown(f"{humidity} %", text_alignment="center")
 
     with col2:
@@ -507,6 +515,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/visibility.svg", width=30)
+            st.caption("Visibility", text_alignment="center")
             st.markdown(f"{visibility // 1000} km", text_alignment="center")
 
     with col3:
@@ -517,6 +526,7 @@ if city and api_key:
             vertical_alignment="center",
         ):
             st.image(f"{icons_dir}/wind.svg", width=30)
+            st.caption("Wind", text_alignment="center")
             st.markdown(
                 f"{speed} m/s, {convert_grad_to_direction(deg)}",
                 text_alignment="center",
