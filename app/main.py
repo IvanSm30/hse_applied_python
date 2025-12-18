@@ -174,7 +174,7 @@ def graphic_time_series(
         height=600,
     )
 
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, width="content")
 
     if not anomalies.empty and len(anomalies) <= 100:
         fig2 = go.Figure()
@@ -207,7 +207,7 @@ def graphic_time_series(
             height=300,
         )
 
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="content")
 
 
 def plot_seasonal_profile(
@@ -302,7 +302,7 @@ def plot_seasonal_profile(
         else {},
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="content")
 
 
 def get_local_time_by_city(city_name):

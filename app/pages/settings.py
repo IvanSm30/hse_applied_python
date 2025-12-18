@@ -28,7 +28,7 @@ if uploaded_file is not None:
         st.success("File uploaded and validated successfully!")
 
         with st.expander("Show data preview"):
-            st.dataframe(df.head(), use_container_width=True)
+            st.dataframe(df.head(), width="content")
 
     except UnicodeDecodeError:
         st.error("Invalid file encoding. Please ensure the file is UTF-8 encoded.")
