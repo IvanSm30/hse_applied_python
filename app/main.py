@@ -8,8 +8,11 @@ from timezonefinder import TimezoneFinder
 import pytz
 import plotly.graph_objects as go
 from typing import Literal
+from pathlib import Path
 
 st.set_page_config(page_title="Weather App", layout="centered")
+
+icons_dir = Path(__file__).parent / "icons"
 
 st.markdown(
     """
@@ -432,7 +435,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/sunrise.svg", caption="Sunrise", width=50)
+            st.image(f"{icons_dir}/sunrise.svg", caption="Sunrise", width=50)
             st.markdown(f"{sunrise} AM", text_alignment="center")
 
     with col3:
@@ -442,7 +445,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/sunset.svg", caption="Sunset", width=50)
+            st.image(f"{icons_dir}/sunset.svg", caption="Sunset", width=50)
             st.markdown(f"{sunset} PM", text_alignment="center")
 
     with col4:
@@ -452,7 +455,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/wind.svg", caption="Wind", width=50)
+            st.image(f"{icons_dir}/wind.svg", caption="Wind", width=50)
             st.markdown(f"speed - {speed}", text_alignment="center")
             st.markdown(f"gust - {gust}", text_alignment="center")
             st.markdown(f"deg - {deg}", text_alignment="center")
