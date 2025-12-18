@@ -486,7 +486,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/pressure.svg", width=30)
+            st.image(f"{icons_dir}/pressure.svg", width=30)
             st.markdown(f"{pressure} hPa", text_alignment="center")
 
     with col3:
@@ -496,7 +496,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/humidity.svg", width=30)
+            st.image(f"{icons_dir}/humidity.svg", width=30)
             st.markdown(f"{humidity} %", text_alignment="center")
 
     with col2:
@@ -506,7 +506,7 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image("icons/visibility.svg", width=30)
+            st.image(f"{icons_dir}/visibility.svg", width=30)
             st.markdown(f"{visibility // 1000} km", text_alignment="center")
 
     with col3:
