@@ -8,6 +8,7 @@ dependencies = [
     "aiohttp>=3.13.2",
     "geopy>=2.4.1",
     "openmeteo-requests>=1.7.4",
+    "plotly>=6.5.0",
     "python-dotenv>=1.2.1",
     "requests-cache>=1.2.1",
     "retry-requests>=2.0.0",
