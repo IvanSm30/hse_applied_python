@@ -47,7 +47,7 @@ api_key = st.text_input(
     "Enter your API key",
     value=st.session_state.get("api_key", ""),
     type="password",
-    placeholder="Your secret key...",
+    placeholder="Your secret key fot OpenWeatherApi...",
     help="API key will be stored locally in this session"
 )
 

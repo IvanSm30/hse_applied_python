@@ -335,6 +335,36 @@ def prepare_current_date_to_history():
     pass
 
 
+def convert_grad_to_direction(grad: float) -> str:
+    if not isinstance(grad, (int, float)):
+        return "N/A"
+
+    grad = grad % 360
+
+    directions = [
+        "N",  # 0°
+        "NNE",  # 22.5°
+        "NE",  # 45°
+        "ENE",  # 67.5°
+        "E",  # 90°
+        "ESE",  # 112.5°
+        "SE",  # 135°
+        "SSE",  # 157.5°
+        "S",  # 180°
+        "SSW",  # 202.5°
+        "SW",  # 225°
+        "WSW",  # 247.5°
+        "W",  # 270°
+        "WNW",  # 292.5°
+        "NW",  # 315°
+        "NNW",  # 337.5°
+        "N",  # 360° == 0°
+    ]
+
+    index = int((grad + 11.25) // 22.5)
+    return directions[index]
+
+
 city_options = [
     "New York",
     "London",
@@ -406,13 +436,14 @@ if city and api_key:
         f"##### Local time ({country},  {city}): {local_time}", text_alignment="center"
     )
 
-    col1, col2, col3, col4 = st.columns([1.5, 1, 1, 1])
+    col1, col2, col3 = st.columns([2, 1, 1])
 
     with col1:
         with st.container(
             border=True,
             horizontal_alignment="center",
             vertical_alignment="center",
+            width=300,
         ):
             st.subheader(city, text_alignment="center")
             st.header(f"{round(temp)} ℃", text_alignment="center")
@@ -431,35 +462,23 @@ if city and api_key:
     with col2:
         with st.container(
             border=True,
-            width=100,
+            width=200,
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image(f"{icons_dir}/sunrise.svg", caption="Sunrise", width=50)
+            st.image(f"{icons_dir}/sunrise.svg", width=30)
             st.markdown(f"{sunrise} AM", text_alignment="center")
 
     with col3:
         with st.container(
             border=True,
-            width=100,
+            width=200,
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.image(f"{icons_dir}/sunset.svg", caption="Sunset", width=50)
+            st.image(f"{icons_dir}/sunset.svg", width=30)
             st.markdown(f"{sunset} PM", text_alignment="center")
 
-    with col4:
-        with st.container(
-            border=True,
-            width=200,
-            horizontal_alignment="center",
-            vertical_alignment="center",
-        ):
-            st.image(f"{icons_dir}/wind.svg", caption="Wind", width=50)
-            st.markdown(f"speed - {speed}", text_alignment="center")
-            st.markdown(f"gust - {gust}", text_alignment="center")
-            st.markdown(f"deg - {deg}", text_alignment="center")
-
     with col2:
         with st.container(
             border=True,
@@ -467,9 +486,8 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            # st.image("icons/pressure.svg", caption="Pressure", width=50)
-            st.caption("Pressure", text_alignment="center")
-            st.markdown(pressure, text_alignment="center")
+            st.image("icons/pressure.svg", width=30)
+            st.markdown(f"{pressure} hPa", text_alignment="center")
 
     with col3:
         with st.container(
@@ -478,9 +496,8 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            # st.image("icons/humidity.svg", caption="Humidity", width=50)
-            st.caption("Humidity", text_alignment="center")
-            st.markdown(humidity, text_alignment="center")
+            st.image("icons/humidity.svg", width=30)
+            st.markdown(f"{humidity} %", text_alignment="center")
 
     with col2:
         with st.container(
@@ -489,9 +506,8 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            # st.image("icons/visibility.svg", caption="Visibility", width=50)
-            st.caption("Visibility", text_alignment="center")
-            st.markdown(visibility, text_alignment="center")
+            st.image("icons/visibility.svg", width=30)
+            st.markdown(f"{visibility // 1000} km", text_alignment="center")
 
     with col3:
         with st.container(
@@ -500,11 +516,23 @@ if city and api_key:
             horizontal_alignment="center",
             vertical_alignment="center",
         ):
-            st.caption("sea_level", text_alignment="center")
-            st.markdown(sea_level, text_alignment="center")
+            st.image(f"{icons_dir}/wind.svg", width=30)
+            st.markdown(
+                f"{speed} m/s, {convert_grad_to_direction(deg)}",
+                text_alignment="center",
+            )
+    # with col4:
+    #     with st.container(
+    #         border=True,
+    #         width=200,
+    #         horizontal_alignment="center",
+    #         vertical_alignment="center",
+    #     ):
+    #         st.caption("sea_level", text_alignment="center")
+    #         st.markdown(sea_level, text_alignment="center")
 
-            st.caption("grnd_level", text_alignment="center")
-            st.markdown(grnd_level, text_alignment="center")
+    #         st.caption("grnd_level", text_alignment="center")
+    #         st.markdown(grnd_level, text_alignment="center")
 
     if len(data) > 0:
         st.divider()
